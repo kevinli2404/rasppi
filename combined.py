@@ -100,48 +100,30 @@ while (r<run):
     plt.ylabel('temp')
     plt.show()
 
-
+    #recording the temperature of the two gradient changes
     temps=[]
-    for i in range (2):
-    
-    ##j=store.index(changes[i-1])
-        print(changes[i])
-        print(y[int(changes[i])])
-        temps.append(y[int(changes[i])])
-    ##temps.append(store[j][1])
-    
+    for i in range (2): #making sure that only 2 are selected, prevents issues later on
+        temps.append(y[int(changes[i])]) #append the temperature of the change instead of the saved time
     results[comp]= temps
-##results[comp]=y(changes)
-    r+=1
-print(results)
+    r+=1 #move onto the next composition. 
+print(results) #print the dictionary of compositions and the value - a tuple of two temperatures. 
 
-##import matplotlib.pyplot as plt
-##import numpy as np
+#set of test data used to check the fit. 
+#dict={'10': [214, 200], '20': [196,170], '30': [178,140],'50': [142,110],'60': [170,110],'70': [230,110]} 
 
-##dict={'10': [214, 200], '20': [196,170], '30': [178,140],'50': [142,110],'60': [170,110],'70': [230,110]}
+#set the temperature and composition of the eutectic point - so applicable to other systems. 
 eut=56
 eutemp=140
-##print(dict)
-##print(len(dict))
-xc,yt=zip(*results.items())
-xc=list(xc)
-#yt=list(yt)
-#print(yt)
-#yt=yt[0][:2]
-print(yt)
-#yt=tuple(yt)
-print(type(yt))
-xc=[float(item) for item in xc]
-yt1,yt2=zip(*yt)
+
+xc,yt=zip(*results.items()) #split the composition and tempeature results. 
+xc=list(xc) #change the data type of xc to a list.
+
+xc=[float(item) for item in xc] #change composition results from string into float. 
+yt1,yt2=zip(*yt) #split the tuple of temperatures into two separate lists. 
 yt1,yt2=list(yt1),list(yt2)
-##print(xc,yt1,yt2)
-##print(type(xc),type(yt1))
-xc1=[]
-xc3=[]
-xc2=[]
-ytt1=[]
-ytt2=[]
-ytt3=[]
+
+xc1, xc2, xc3, ytt1, ytt2, ytt3  = ([] for i in range(6))
+
 for i in range(len(xc)):
     test=xc[i]
     print(xc[i],i)
