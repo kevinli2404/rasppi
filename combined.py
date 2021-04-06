@@ -164,6 +164,8 @@ yh=[eutemp]*len(xh1)
 #plot each of the lines to create the eutectic phase diagram. 
 plt.xlim(0,100)
 plt.ylim(50,300)
+plt.xlabel('composition (wt%)')
+plt.ylabel('temp (°C)')
 plt.scatter(xc1,ytt1)
 plt.scatter(xc2,ytt2)
 plt.scatter(xc3,ytt3)
