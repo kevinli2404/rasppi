@@ -1,3 +1,7 @@
+#this code utilises the Adafruit_Python_MAX31855 library which is used to read the temperature of the thermocouple. Only selected parts have been utilised. 
+#The complete code can be found at
+#https://github.com/adafruit/Adafruit_Python_MAX31855
+
 #!/usr/bin/python
 # Copyright (c) 2014 Adafruit Industries
 # Author: Tony DiCola
@@ -39,16 +43,16 @@ sensor = MAX31855.MAX31855(CLK, CS, DO)
 
 
 
-results={} #the dictionary that will store composition and locations of gradient change
-run = int(input("how many compositions to test?"))#determining how many compositions to test
-r=0
+results={} #the dictionary that will store composition and two locations of gradient change
+run = int(input("how many compositions to test?")) #determining how many compositions to test
+r=0 #indexing which run is currently happening
 
 #This code will run for each composition. It will record temperature time data from the thermocouple and figure out location of gradient changes
 while (r<run): 
     comp = input("Enter Composition (%)") #user enters composition
 
-    print('Press Ctrl-C to quit.') 
-    store=list()
+    print('Press Ctrl-C to quit.') #ctrl-c can be used to quit if the set up is wrong. 
+    store=list() #initiating the storage of a list of tuples that store temperature-time data. 
     rest=0 #initiate time variable
     while (sensor.readTempC()) < 32: #measuring temperatures from melt to 70 degrees C
         temp = sensor.readTempC()
