@@ -54,32 +54,36 @@ while (r<run):
     print('Press Ctrl-C to quit.') #ctrl-c can be used to quit if the set up is wrong. 
     store=list() #initiating the storage of a list of tuples that store temperature-time data. 
     rest=0 #initiate time variable
-    while (sensor.readTempC()) < 32: #measuring temperatures from melt to 70 degrees C
+    while (sensor.readTempC()) > 70: #measuring temperatures from melt to 70 degrees C
         temp = sensor.readTempC()
         tups=(rest,temp)
         store.append(tups) #storing time and temperature
-        time.sleep(1.0)
-        rest+=1
-        print(tups)
+        time.sleep(1.0) #wait 1 second between readings. This can be amended for more granular data. 
+        rest+=1 #counter used to assign a time variable for each temperature.
+        #print(tups)
         
     x,y=zip(*store) #breaking time and temperature into two separate lists
     
-    #using linear interpolation to figure out where changes of gradient occur
+    #using piecewise linera fit in order to determine where gradient changes occur
+    #the variables can be adjusted in order to change sensitivity of gradient change. 
+    #code extracted from https://stackoverflow.com/questions/47519626/using-numpy-scipy-to-identify-slope-changes-in-digital-signals
     y =np.asarray(y)
     from scipy.interpolate import UnivariateSpline
-    threshold = 0.1
+    threshold = 0.1 #this is the parameter to change to affect the sensitivity of gradient changes
     m = len(y)
     x = np.arange(m)
     s = m
     max_error = 1
     while max_error > threshold: 
-      spl = UnivariateSpline(x, y, k=1, s=s)
+      spl = UnivariateSpline(x, y, k=1, s=s) #fits a straight line through a few points
       interp_y = spl(x)
       max_error = np.max(np.abs(interp_y - y))
       s /= 2
     knots = spl.get_knots()
-    values = spl(knots)
-
+    values = spl(knots) #gets the locations of each of the gradient changes
+    
+    #test the importance of each knot, ie does the gradient change sufficiently at each point
+    #removes each knot in turn and then checks the effect on the error if it is removed. 
     ts = knots.size
     idx = np.arange(ts)
     changes = []
@@ -87,13 +91,15 @@ while (r<run):
       spl = UnivariateSpline(knots[idx != j], values[idx != j], k=1, s=0)
       if np.max(np.abs(spl(x) - interp_y)) > 2*threshold:
         changes.append(knots[j])
+        
+    #plotting a graph of the recorded temperature time data
+    #marking the locations of the knots.
     plt.plot(y)
     plt.plot(changes, y[np.array(changes, dtype=int)], 'ro')
     plt.xlabel('time')
     plt.ylabel('temp')
     plt.show()
-##print(len(changes))
-##print(y)
+
 
     temps=[]
     for i in range (2):
