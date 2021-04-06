@@ -54,7 +54,7 @@ while (r<run):
     print('Press Ctrl-C to quit.') #ctrl-c can be used to quit if the set up is wrong. 
     store=list() #initiating the storage of a list of tuples that store temperature-time data. 
     rest=0 #initiate time variable
-    while (sensor.readTempC()) > 70: #measuring temperatures from melt to 70 degrees C
+    while (sensor.readTempC()) > 50: #measuring temperatures from melt to 70 degrees C
         temp = sensor.readTempC()
         tups=(rest,temp)
         store.append(tups) #storing time and temperature
@@ -119,35 +119,37 @@ xc,yt=zip(*results.items()) #split the composition and tempeature results.
 xc=list(xc) #change the data type of xc to a list.
 
 xc=[float(item) for item in xc] #change composition results from string into float. 
-yt1,yt2=zip(*yt) #split the tuple of temperatures into two separate lists. 
-yt1,yt2=list(yt1),list(yt2)
+yt1,yt2=zip(*yt) #split the tuple of temperatures into two separate arrays. 
+yt1,yt2=list(yt1),list(yt2) 
 
-xc1, xc2, xc3, ytt1, ytt2, ytt3  = ([] for i in range(6))
+xc1, xc2, xc3, ytt1, ytt2, ytt3  = ([] for i in range(6)) #opening empty lists to store data
 
+#in order to plot the three lines, need to separate values below and above eutectic composition
 for i in range(len(xc)):
     test=xc[i]
-    print(xc[i],i)
+    #separate x and y values into three separate groups. Those below and above eutectic comp and upper and lower transition temperatures. 
     if xc[i]<56:
         xc1.append(xc[i]),ytt1.append(yt1[i]),ytt2.append(yt2[i])
     else:
         xc3.append(xc[i]),ytt3.append(yt1[i])
-        
-        
-print(xc1,ytt1,ytt2,xc3,ytt3)
-##adding in the points we know ie melting points and composition of pure and eutectic to each curve.
-xc1.insert(0,0),xc1.append(56),xc3.insert(0,56),xc3.append(100)
-ytt1.insert(0,227),ytt1.append(eutemp),ytt2.insert(0,227),ytt2.append(eutemp),ytt3.insert(0,eutemp),ytt3.append(267)
-print(xc1,ytt1,ytt2,xc3,ytt3)
+     
+Tm1 = 227 #melting temperature of the first metal (0 wt%)
+Tm2 = 267 #melting temperature of second metal (100 wt%)
+#adding in the points we know ie melting points and composition of pure and eutectic to each curve.
+xc1.insert(0,0),xc1.append(eut),xc3.insert(0,eut),xc3.append(100)
+ytt1.insert(0,Tm1),ytt1.append(eutemp),ytt2.insert(0,Tm1),ytt2.append(eutemp),ytt3.insert(0,eutemp),ytt3.append(Tm2)
 xc2=xc1
 
-
+#fitting second order polynomial to each of the three curves we expect to form
 cf1,cf2,cf3=np.polyfit(xc1,ytt1,2),np.polyfit(xc2,ytt2,2),np.polyfit(xc3,ytt3,2)
-p1,p2,p3=np.poly1d(cf1),np.poly1d(cf2),np.poly1d(cf3)
+p1,p2,p3=np.poly1d(cf1),np.poly1d(cf2),np.poly1d(cf3) #creating the polynomial functions
 
 
+#creating x and y values to be plotted. 
 x1,x2,x3=np.linspace(xc1[0],xc1[-1]),np.linspace(xc2[0],xc2[-1]),np.linspace(xc3[0],xc3[-1])
 y1,y2,y3=p1(x1),p2(x2),p3(x3)
 
+#creating the horizontal eutectic temperature line at the point where line 2 meets eutemp. 
 yy2=[]
 xx2=[]
 for i in range(len(x2)):
@@ -159,6 +161,7 @@ xh1=np.linspace(xh,100)
 yh=[eutemp]*len(xh1)
 
 
+#plot each of the lines to create the eutectic phase diagram. 
 plt.xlim(0,100)
 plt.ylim(50,300)
 plt.scatter(xc1,ytt1)
