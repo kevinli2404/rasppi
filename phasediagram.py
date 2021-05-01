@@ -21,18 +21,18 @@ ytt2=[]
 ytt3=[]
 for i in range(len(xc)):
     test=xc[i]
-    print(xc[i],i)
+    #print(xc[i],i)
     if xc[i]<56:
         xc1.append(xc[i]),ytt1.append(yt1[i]),ytt2.append(yt2[i])
     else:
         xc3.append(xc[i]),ytt3.append(yt1[i])
         
         
-print(xc1,ytt1,ytt2,xc3,ytt3)
+#print(xc1,ytt1,ytt2,xc3,ytt3)
 ##adding in the points we know ie melting points and composition of pure and eutectic to each curve.
 xc1.insert(0,0),xc1.append(56),xc3.insert(0,56),xc3.append(100)
 ytt1.insert(0,227),ytt1.append(140),ytt2.insert(0,227),ytt2.append(140),ytt3.insert(0,140),ytt3.append(267)
-print(xc1,ytt1,ytt2,xc3,ytt3)
+#print(xc1,ytt1,ytt2,xc3,ytt3)
 xc2=xc1
 
 
